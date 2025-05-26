@@ -18,7 +18,7 @@ public class TmdbController {
     }
 
     @GetMapping
-    public List<MovieDto> getMovies(@RequestParam(defaultValue = "1") int page){
+    public List<MovieDto> getMovies(@RequestParam(defaultValue = "1") int page) throws Exception {
         return tmdbService.getMovies(page);
     }
 }

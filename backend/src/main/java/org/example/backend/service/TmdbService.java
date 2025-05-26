@@ -27,7 +27,7 @@ public class TmdbService {
                 .build();
     }
 
-    public List<MovieDto> getMovies(int page) {
+    public List<MovieDto> getMovies(int page) throws Exception {
         MovieListResponse response = restClient.get()
                                     .uri(uriBuilder -> uriBuilder.path("/discover/movie").queryParam("page", page).queryParam("sort_by", "popularity.dec").build())
                                     .accept(MediaType.APPLICATION_JSON)
