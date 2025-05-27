@@ -1,39 +1,44 @@
 package org.example.backend.service;
 
-import org.example.backend.model.MovieDto;
-import org.example.backend.model.MovieListResponse;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
+import org.example.backend.helper.TmdbHelper;
+import org.example.backend.mapper.MovieMapper;
+import org.example.backend.model.*;
+import org.example.backend.repository.MovieRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-
-
 import java.util.List;
 
 @Service
 public class TmdbService {
-    private final String TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
-    //RestClient工具类,用于发出 HTTP 请求（访问外部 API，如 TMDB）
-    private final RestClient restClient;
-    //@Autowired
-    //private ObjectMapper objectMapper;
+    private final TmdbHelper tmdbHelper;
+    private final MovieMapper movieMapper;
+    private final MovieRepository movieRepository;
 
-    public TmdbService(@Value("${TMDB_API_KEY}") String tmdbApiKey) {
-        this.restClient = RestClient.builder()
-                .baseUrl(TMDB_BASE_URL)
-                .defaultHeader("Authorization", "Bearer " + tmdbApiKey)
-                .build();
+    public TmdbService(TmdbHelper tmdbHelper, MovieMapper movieMapper, MovieRepository movieRepository) {
+        this.tmdbHelper = tmdbHelper;
+        this.movieMapper = movieMapper;
+        this.movieRepository = movieRepository;
     }
 
-    public List<MovieDto> getMovies(int page) throws Exception {
-        MovieListResponse response = restClient.get()
-                                    .uri(uriBuilder -> uriBuilder.path("/discover/movie").queryParam("page", page).queryParam("sort_by", "popularity.dec").build())
-                                    .accept(MediaType.APPLICATION_JSON)
-                                    .retrieve()
-                                    .body(MovieListResponse.class);
-        return response.results();
-    }
+    public List<Movie> getMovies(int page){
+        try {
+            List<Movie> movies = tmdbHelper.getMovieDtos(page).stream()
+                    .map(dto -> {
+                        try {
+                            return movieMapper.mapToMovie(dto);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Error mapping movie DTO", e);
+                        }
+                    }).toList();
+            for (Movie movie : movies) {  // 保存到 MongoDB（去重）
+                if (!movieRepository.existsByTmdbId(movie.getTmdbId())) {
+                    movieRepository.save(movie);
+                }
+            }
+            return movies;
 
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch movies from TMDB", e);
+        }
+    }
 }
