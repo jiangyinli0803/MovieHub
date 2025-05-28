@@ -1,6 +1,6 @@
 package org.example.backend.controller;
 import org.example.backend.model.Movie;
-import org.example.backend.service.TmdbService;
+import org.example.backend.repository.MovieRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import static org.mockito.Mockito.when;
 
-
 @Import(TmdbControllerTest.TestConfig.class)
 @WebMvcTest(TmdbController.class)
 class TmdbControllerTest {
@@ -24,24 +23,24 @@ class TmdbControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private TmdbService tmdbService;
+    private MovieRepository movieRepository;
 
     @TestConfiguration
-    static class TestConfig {
+    public static class TestConfig {
         @Bean
-        public TmdbService tmdbService() {
-            return Mockito.mock(TmdbService.class);
+        public MovieRepository movieRepository() {
+            return Mockito.mock(MovieRepository.class);
         }
     }
 
     @Test
-    void getMovies_shouldReturnMovieList_whenCalledWithPage() throws Exception {
+    void getMovies_shouldReturnMovieList_whenCalled() throws Exception {
         //given
         LocalDateTime fixedTime =LocalDateTime.parse("2025-05-28T12:00:00");
         List<Movie> movies = List.of(
                 new Movie("123", 344, "title", "en", 7.45, 123, "12.04.2025", List.of("Anna", "Tom"), "https", "This is a super cool movie", List.of("Action"), fixedTime)
         );
-        when(tmdbService.getMovies(1)).thenReturn(movies);
+        when(movieRepository.findAll()).thenReturn(movies);
 
         //when //then
         mockMvc.perform(MockMvcRequestBuilders.get("/api/movies"))
