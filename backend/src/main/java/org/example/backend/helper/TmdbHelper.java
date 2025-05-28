@@ -12,10 +12,9 @@ public class TmdbHelper {
     //RestClient工具类,用于发出 HTTP 请求（访问外部 API，如 TMDB）
     private final RestClient restClient;
 
-    public TmdbHelper(@Value("${tmdb.api.key}") String tmdbApiKey) {
-        String TMDB_BASE_URL = "https://api.themoviedb.org/3";
-        this.restClient = RestClient.builder()
-                .baseUrl(TMDB_BASE_URL)
+    public TmdbHelper(@Value("${tmdb.api.key}") String tmdbApiKey, RestClient.Builder restClientBuilder) {
+            this.restClient =restClientBuilder
+                .baseUrl("https://api.themoviedb.org/3")
                 .defaultHeader("Authorization", "Bearer " + tmdbApiKey)
                 .build();
     }
