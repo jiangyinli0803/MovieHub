@@ -24,5 +24,9 @@ public class TmdbController {
         return movieRepository.findById(id).orElse(null);
     }
 
+    @GetMapping("/category/{category}")
+    public List<Movie> getMoviesByCategory(@PathVariable String category){
+        return movieRepository.findByCategoryContainingIgnoreCase(category);
+    }
 
 }
