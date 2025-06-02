@@ -50,11 +50,7 @@ public class TmdbService {
             for (Movie movie : movies) {
                 String correctedLang = getLanguageName(movie.getLanguage());
                 movie.setLanguage(correctedLang);
-                if (movieRepository.existsByTmdbId(movie.getTmdbId())) {
-                    movieRepository.save(movie); // 更新旧数据（改 language）
-                } else {
-                    movieRepository.save(movie); // 保存新数据
-                }
+                movieRepository.save(movie);
             }
             return movies;
 
