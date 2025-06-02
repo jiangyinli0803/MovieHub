@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import type {IMovie} from "../interface/IMovie.ts";
 import axios from "axios";
 import MovieCard from "../components/MovieCard.tsx";
+import Pagination from "../components/Pagination.tsx";
 
 export default function MovieGalerie(){
     const[movies, setMovies] = useState<IMovie[]>([]);
@@ -18,9 +19,9 @@ export default function MovieGalerie(){
     const indexOfLastMovie = currentPage *  moviesPerPage;
     const indexOfFirstMovie = (currentPage - 1 )*  moviesPerPage;
     const currentMovies = movies.slice(indexOfFirstMovie, indexOfLastMovie);
-    const numOfPages = Math.ceil(movies.length / moviesPerPage);
+    const totalPages = Math.ceil(movies.length / moviesPerPage);
 
-    const pageButtons = [];
+    /*const pageButtons = [];
     for (let i = 1; i <= numOfPages; i++) {
         pageButtons.push(
             <button
@@ -35,7 +36,7 @@ export default function MovieGalerie(){
                 {i}
             </button>
         );
-    }
+    }*/
 
 
 
@@ -52,7 +53,13 @@ export default function MovieGalerie(){
                     </div>
                 )}
             </div>
-            <div className="text-center">{pageButtons}</div>
+            <div className="text-center">
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
+            </div>
         </>
         )
 
