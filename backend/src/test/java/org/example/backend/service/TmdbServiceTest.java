@@ -41,7 +41,6 @@ class TmdbServiceTest {
         Movie mappedMovie = new Movie("123", 344, "title", "en", 7.45, 123, "12.04.2025", List.of("Anna", "Tom"), "https", "This is a super cool movie", List.of("Action"), fixedTime);
         Mockito.when(tmdbHelper.getMovieDtos(1)).thenReturn(List.of(movieDto));
         Mockito.when(movieMapper.mapToMovie(movieDto)).thenReturn(mappedMovie);
-        Mockito.when(movieRepository.existsByTmdbId(344L)).thenReturn(false);
 
         //when
         List<Movie> result = tmdbService.getMovies(1);
