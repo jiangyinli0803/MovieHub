@@ -6,6 +6,7 @@ import org.example.backend.model.*;
 import org.example.backend.repository.MovieRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TmdbService {
@@ -19,6 +20,22 @@ public class TmdbService {
         this.movieMapper = movieMapper;
         this.movieRepository = movieRepository;
     }
+    private static final Map<String, String> LANGUAGE_MAP = Map.ofEntries(
+            Map.entry("en", "English"),
+            Map.entry("fr", "French"),
+            Map.entry("ja", "Japanese"),
+            Map.entry("zh", "Chinese"),
+            Map.entry("de", "German"),
+            Map.entry("es", "Spanish"),
+            Map.entry("ko", "Korean"),
+            Map.entry("it", "Italian"),
+            Map.entry("hi", "Hindi"),
+            Map.entry("ru", "Russian")
+    );
+
+    private String getLanguageName(String code) {
+        return LANGUAGE_MAP.getOrDefault(code, code); // fallback to original if not found
+    }
 
     public List<Movie> getMovies(int page){
         try {
@@ -30,10 +47,10 @@ public class TmdbService {
                             throw new RuntimeException("Error mapping movie DTO", e);
                         }
                     }).toList();
-            for (Movie movie : movies) {  // 保存到 MongoDB（去重）
-                if (!movieRepository.existsByTmdbId(movie.getTmdbId())) {
-                    movieRepository.save(movie);
-                }
+            for (Movie movie : movies) {
+                String correctedLang = getLanguageName(movie.getLanguage());
+                movie.setLanguage(correctedLang);
+                movieRepository.save(movie);
             }
             return movies;
 
