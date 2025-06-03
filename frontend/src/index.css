@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* stylelint-disable-next-line at-rule-no-unknown */
 @theme {
   --color-dark: oklch(0.3702 0.1224 259.96);
   --color-brightblue: oklch(0.5642 0.1651 251.29);
