@@ -5,6 +5,7 @@ import org.example.backend.model.Movie;
 import org.example.backend.service.SearchMovieService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -18,8 +19,8 @@ public class SearchMovieController {
     }
 
     @GetMapping
-    public List<Movie> getFilteredMovies(String searchText) throws MovieNotFoundException {
-        return searchMovieService.getFilteredMovies(searchText);
+    public List<Movie> getFilteredMovies(@RequestParam String query) throws MovieNotFoundException {
+        return searchMovieService.getFilteredMovies(query);
     }
 }
 
