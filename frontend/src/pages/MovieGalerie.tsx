@@ -21,25 +21,6 @@ export default function MovieGalerie(){
     const currentMovies = movies.slice(indexOfFirstMovie, indexOfLastMovie);
     const totalPages = Math.ceil(movies.length / moviesPerPage);
 
-    /*const pageButtons = [];
-    for (let i = 1; i <= numOfPages; i++) {
-        pageButtons.push(
-            <button
-                key={i}
-                onClick={() => setCurrentPage(i)}
-                className={`px-4 py-2 mx-2 rounded-lg border text-sm font-medium transition
-                ${currentPage === i
-                    ? "bg-brightblue text-white cursor-default"
-                    : "bg-white text-gray-700 hover:bg-blue-100 border-gray-300"}                
-                `}
-            >
-                {i}
-            </button>
-        );
-    }*/
-
-
-
     return(
         <>
             <div className="p-6">
