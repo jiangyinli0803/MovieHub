@@ -15,12 +15,17 @@ public class SearchMovieService {
         this.movieRepository = movieRepository;
     }
 
-    public List<Movie> getFilteredMovies(String searchText) throws MovieNotFoundException {
-        String keyword = searchText.trim().toLowerCase();
+    public List<Movie> getFilteredMovies(String query) throws MovieNotFoundException {
+        String keyword = query.trim().toLowerCase();
         List<Movie> movies = movieRepository.findAll();
-        return movies.stream().filter(
+        List<Movie> filteredMovies =  movies.stream().filter(
                 movie -> movie.getTitle().toLowerCase().contains(keyword)
                 || movie.getActors().stream().anyMatch(a -> a.toLowerCase().contains(keyword))
                 ).toList();
+
+        if (filteredMovies.isEmpty()) {
+            throw new MovieNotFoundException("No movies found matching: " + query);
+        }
+        return filteredMovies;
     }
 }
