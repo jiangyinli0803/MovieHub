@@ -1,5 +1,6 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
+import AuthModal from "./components/AuthModal.tsx";
 
 export default function NavBar(){
     const [query, setQuery] = useState("");
@@ -10,9 +11,12 @@ export default function NavBar(){
         }
     };
 
+    const [showAuthModal, setShowAuthModal] = useState(false);
+
     return(
-        <>
-            <div className="flex items-center w-screen space-x-8 bg-dark px-6 py-4 mb-6 h-20">
+
+        <div className="flex items-center w-screen space-x-8 bg-dark px-6 py-4 mb-6 h-20">
+            <img src="../public/assets/movie-logo.PNG" alt="logo" className="h-16 w-auto" />
             <Link to={"/"} className="text-white font-medium">Home</Link>
             <Link to={"/movies"} className="text-white font-medium">Movie Galerie</Link>
 
@@ -26,8 +30,16 @@ export default function NavBar(){
                        onChange={e => setQuery(e.target.value)}
                        onKeyDown={handleEnter}/>
             </div>
-            </div>
 
-        </>
-    )
+            {/* Log in */}
+            <button onClick={() => setShowAuthModal(true)}
+            className="absolute right-4 px-4 py-1.5 border-2 border-white font-medium text-white rounded-md hover:bg-white hover:text-dark transition"
+            >Login</button>
+
+            {/* 通过onClose传给子组件关闭函数，来控制弹窗Modal关闭， 在AuthModal中点击button时，激活关闭函数 */}
+            {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+
+        </div>
+
+        )
 }
