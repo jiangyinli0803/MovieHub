@@ -6,6 +6,7 @@ import NavBar from "./NavBar.tsx";
 import HomePage from "./pages/HomePage.tsx";
 import MovieDetail from "./pages/MovieDetail.tsx";
 import CategoryPage from "./pages/CategoryPage.tsx";
+import SearchBar from "./pages/SearchBar.tsx";
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
           <Route path={'/movies'} element={<MovieGalerie/>}/>
           <Route path="/movies/:id" element={<MovieDetail />} />
           <Route path="/category/:category" element={<CategoryPage />} />
+          <Route path="/search/:query" element={<SearchBar/>}/>
       </Routes>
 
     </>
