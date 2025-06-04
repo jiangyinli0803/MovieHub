@@ -28,7 +28,7 @@ class SearchMovieControllerTest {
 
         movieRepository.save(movie);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/search").param("searchText", "test"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/search").param("query", "test"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(
                         """
