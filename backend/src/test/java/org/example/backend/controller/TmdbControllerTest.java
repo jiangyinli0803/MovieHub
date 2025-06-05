@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -36,6 +37,7 @@ class TmdbControllerTest {
     }
 
     @Test
+    @WithMockUser
     void getMovies_shouldReturnMovieList_whenCalled() throws Exception {
         //given
         LocalDateTime fixedTime =LocalDateTime.parse("2025-05-28T12:00:00");
@@ -55,6 +57,7 @@ class TmdbControllerTest {
     }
 
     @Test
+    @WithMockUser
     void getMovieById_shouldReturnMovie_whenCalled() throws Exception {
         LocalDateTime fixedTime =LocalDateTime.parse("2025-05-28T12:00:00");
         Movie movie = new Movie("123", 344, "title", "en", 7.45, 123, "12.04.2025", List.of("Anna", "Tom"), "https", "This is a super cool movie", List.of("Action"), fixedTime);
@@ -69,6 +72,7 @@ class TmdbControllerTest {
     }
 
     @Test
+    @WithMockUser
     void getMoviesByCategory_shouldReturnMovieList_whenCalled() throws Exception {
         LocalDateTime fixedTime =LocalDateTime.parse("2025-05-28T12:00:00");
         Movie movie = new Movie("123", 344, "title", "en", 7.45, 123, "12.04.2025", List.of("Anna", "Tom"), "https", "This is a super cool movie", List.of("Action"), fixedTime);

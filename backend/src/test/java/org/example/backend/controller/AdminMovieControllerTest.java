@@ -1,5 +1,6 @@
 package org.example.backend.controller;
 
+import org.example.backend.security.SecurityConfig;
 import org.example.backend.service.TmdbService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -8,16 +9,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @WebMvcTest(controllers = AdminMovieController.class)
-@Import(AdminMovieControllerTest.TestConfig.class)
+@Import({AdminMovieControllerTest.TestConfig.class, SecurityConfig.class})
 class AdminMovieControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -34,8 +37,9 @@ class AdminMovieControllerTest {
     }
 
     @Test
+    @WithMockUser
     void refreshMovies_shouldCallTmdbServiceFor20Pages_andReturnOk() throws Exception {
-        mockMvc.perform(post("/admin/refresh-movies"))
+        mockMvc.perform(post("/admin/refresh-movies").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Movies refreshed from TMDB"));
 
