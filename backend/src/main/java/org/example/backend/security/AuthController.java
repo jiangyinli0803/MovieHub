@@ -14,7 +14,7 @@ public class AuthController {
 
     @GetMapping
     public String getMe(@AuthenticationPrincipal OAuth2User user) {
-        if (user == null) return "Not authenticated";
+        if (user == null) return null;
 
         //GitHub OAuth 返回的用户信息里，有 "login" 这个字段（如用户名）
         //Google OAuth 返回的是 "name", "email" 等，没有 "login"

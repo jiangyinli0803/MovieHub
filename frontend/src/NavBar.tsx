@@ -1,6 +1,9 @@
 import {Link, useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import AuthModal from "./components/AuthModal.tsx";
+import {UserContext} from "./context/UserContext.tsx";
+import axios from "axios";
+
 
 export default function NavBar(){
     const [query, setQuery] = useState("");
@@ -11,12 +14,26 @@ export default function NavBar(){
         }
     };
 
+    const {user} = useContext(UserContext);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const handleLogout = () => {
+        const confirmLogout = window.confirm("Are you sure you want to log out?");
+
+        if (!confirmLogout) return;
+
+        axios.post('http://localhost:8080/logout', {}, { withCredentials: true })
+            .then(() => {
+                window.location.href = "http://localhost:5173";  // 登出成功后跳转
+            })
+            .catch(() => {
+                alert('Logout failed');
+            });
+    };
 
     return(
-
+        <>
         <div className="flex items-center w-screen space-x-8 bg-dark px-6 py-4 mb-6 h-20">
-            <img src="../public/assets/movie-logo.PNG" alt="logo" className="h-16 w-auto" />
+            <img src="/assets/movie-logo.PNG" alt="logo" className="h-16 w-auto" />
             <Link to={"/"} className="text-white font-medium">Home</Link>
             <Link to={"/movies"} className="text-white font-medium">Movie Galerie</Link>
 
@@ -31,15 +48,26 @@ export default function NavBar(){
                        onKeyDown={handleEnter}/>
             </div>
 
-            {/* Log in */}
-            <button onClick={() => setShowAuthModal(true)}
-            className="absolute right-4 px-4 py-1.5 border-2 border-white font-medium text-white rounded-md hover:bg-white hover:text-dark transition"
-            >Login</button>
+        {/* check if user logged in */}
+            {user ? (
+                <>
+                <span className="text-red-600">Hello {user}!</span>
+                <Link to={"/dashboard"} className="text-white font-medium">Dashboard</Link>
+                    {/* Log out */}
+                <button onClick={handleLogout}
+                        className="absolute right-4 px-4 py-1.5 border-2 border-white font-medium text-white rounded-md hover:bg-white hover:text-dark transition"
+                >Logout</button>
+            </>) : (<>
+                    {/* Log in */}
+                <button onClick={() => setShowAuthModal(true)}
+                        className="absolute right-4 px-4 py-1.5 border-2 border-white font-medium text-white rounded-md hover:bg-white hover:text-dark transition"
+                >Login</button>
+            </>)}
 
             {/* 通过onClose传给子组件关闭函数，来控制弹窗Modal关闭， 在AuthModal中点击button时，激活关闭函数 */}
             {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
 
         </div>
-
+        </>
         )
 }
