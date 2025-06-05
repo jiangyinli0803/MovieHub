@@ -13,6 +13,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,7 +39,7 @@ class AdminMovieControllerTest {
     @Test
     @WithMockUser
     void refreshMovies_shouldCallTmdbServiceFor20Pages_andReturnOk() throws Exception {
-        mockMvc.perform(post("/admin/refresh-movies"))
+        mockMvc.perform(post("/admin/refresh-movies").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Movies refreshed from TMDB"));
 
