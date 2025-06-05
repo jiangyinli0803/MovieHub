@@ -24,7 +24,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/logout"))
+                //.csrf(csrf -> csrf.ignoringRequestMatchers("/logout"))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll()
