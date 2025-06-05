@@ -6,7 +6,7 @@ type ProtectedRouteProps = {
 
 export default function ProtectedRoute(props: Readonly<ProtectedRouteProps>){
     if(props.user === undefined || props.user === null){
-        <h3>Loading...</h3>
+        return <h3>Loading...</h3>
     }
 
     return(
