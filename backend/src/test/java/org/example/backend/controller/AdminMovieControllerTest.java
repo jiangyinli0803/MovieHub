@@ -1,5 +1,7 @@
 package org.example.backend.controller;
 
+import org.example.backend.security.CustomOAuth2UserService;
+import org.example.backend.security.CustomUserDetailService;
 import org.example.backend.security.SecurityConfig;
 import org.example.backend.service.TmdbService;
 import org.junit.jupiter.api.Test;
@@ -17,16 +19,24 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
 
 
 @WebMvcTest(controllers = AdminMovieController.class)
-@Import({AdminMovieControllerTest.TestConfig.class, SecurityConfig.class})
+@Import(SecurityConfig.class)
 class AdminMovieControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private TmdbService tmdbService;
+
+    @MockBean
+    private CustomUserDetailService customUserDetailService;
+
+    @MockBean
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @TestConfiguration
     public static class TestConfig {
