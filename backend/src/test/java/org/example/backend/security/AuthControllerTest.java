@@ -7,8 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 
 @SpringBootTest
@@ -21,9 +19,12 @@ class AuthControllerTest {
     void getMe() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/auth")
                         .with(oidcLogin().userInfoToken(token -> token
-                                .claim("login", "testUser"))))
+                                .claim("login", "testUser")
+                                .claim("avatar_url", "http://example.com/avatar.png")))
+                        )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("testUser"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("testUser"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.avatarUrl").value("http://example.com/avatar.png"));
     }
 
 }
