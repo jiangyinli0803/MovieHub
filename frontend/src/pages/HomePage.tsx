@@ -18,7 +18,7 @@ export default function HomePage() {
     ];
     return(
     <>
-        <h1 className="text-2xl font-bold mb-4">Movie Categories</h1>q
+        <h1 className="text-2xl font-bold mb-4">Movie Categories</h1>
         <ul className="grid grid-cols-4 gap-1">
             {categories.map((category) => (
                 <li key={category}>

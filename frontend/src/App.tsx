@@ -12,10 +12,11 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import Dashboard from "./pages/Dashboard.tsx";
 import {UserContext} from "./context/UserContext.tsx";
+import type {IUser} from "./interface/IUser.ts";
 
 
 function App() {
-    const [user, setUser] = useState<string|null|undefined>();
+    const [user, setUser] = useState<IUser|null|undefined>();
     const loadUser = () => {
         axios.get("/api/auth")
             .then(response => setUser(response.data))
