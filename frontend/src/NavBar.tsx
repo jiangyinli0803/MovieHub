@@ -51,7 +51,7 @@ export default function NavBar(){
         {/* check if user logged in */}
             {user ? (
                 <>
-                <span className="text-red-600">Hello {user}!</span>
+                <span className="text-red-600">Hello {user.name}!</span>
                 <Link to={"/dashboard"} className="text-white font-medium">Dashboard</Link>
                     {/* Log out */}
                 <button onClick={handleLogout}

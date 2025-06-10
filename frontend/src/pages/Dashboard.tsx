@@ -1,12 +1,17 @@
+import type {IUser} from "../interface/IUser.ts";
+
 type Props = {
-    user: string|undefined|null
+    user: IUser|undefined|null
 }
 
 export default function Dashboard({user}: Readonly<Props>){
     return(
         <>
         <h1>Dashboard</h1>
-        <h2>Hello, {user}</h2>
+
+        <h2 className="text-2xl mt-2">Hello, {user?.name}</h2>
+        <img src={user?.avatarUrl} alt={user?.name}/>
+
         </>
     )
 }

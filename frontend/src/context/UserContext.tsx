@@ -1,7 +1,11 @@
 import {createContext} from "react";
+import type {IUser} from "../interface/IUser.ts";
 
-export const UserContext = createContext<
-    {user: string|null|undefined}
->({user: undefined})
+interface IUserContext {
+    user: IUser | null | undefined;
+}
 
-// user 实际上是一个对象，结构是 { user: string | null | undefined }，不是直接的字符串
+export const UserContext = createContext<IUserContext>({
+    user: undefined,
+});
+// user 实际上是一个对象，结构是 { user: IUser | null | undefined }，不是直接的字符串
