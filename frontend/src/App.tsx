@@ -18,8 +18,10 @@ import type {IUser} from "./interface/IUser.ts";
 function App() {
     const [user, setUser] = useState<IUser|null|undefined>();
     const loadUser = () => {
-        axios.get("/api/auth")
-            .then(response => setUser(response.data))
+        axios.get("/api/auth", { withCredentials: true })
+            .then(response => {setUser(response.data);
+                //console.log("response is: ", response.data.username)
+            })
             .catch(() => setUser(null))
     }
     useEffect(() => {
@@ -28,7 +30,7 @@ function App() {
 
   return (
     <>
-    <UserContext value={{user}}>
+    <UserContext.Provider value={{user, setUser, loadUser}}>
       <NavBar/>
       <Routes>
           <Route path={'/'} element={<HomePage/>}/>
@@ -40,7 +42,7 @@ function App() {
           <Route path="/category/:category" element={<CategoryPage />} />
           <Route path="/search/:query" element={<SearchBar/>}/>
       </Routes>
-    </UserContext>
+    </UserContext.Provider>
     </>
   )
 }

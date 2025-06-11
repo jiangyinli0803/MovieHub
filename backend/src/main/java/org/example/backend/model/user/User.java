@@ -23,7 +23,6 @@ public class User {
     // OAuth Login
     private AuthProvider authProvider;
     private String providerId;
-    private String name;
     private String avatarUrl;
 
     private LocalDateTime createdAt;
