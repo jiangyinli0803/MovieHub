@@ -20,6 +20,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
 
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+       // System.out.println("OAuth2 login triggered for: " + userRequest.getClientRegistration().getRegistrationId());
         OAuth2User appUser = super.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
@@ -27,15 +28,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         Map<String, Object> attributes = appUser.getAttributes();
         String providerId = getProviderId(attributes, provider);
-        String email = getEmail(attributes, provider);
-        String name = getName(attributes, provider);
+       String email = getEmail(attributes, provider);
+
+        String username = getUsername(attributes, provider);
         String avatarUrl = getAvatarUrl(attributes, provider);
 
         Optional<User> userOpt = userRepository.findByAuthProviderAndProviderId(provider, providerId);
         User user;
         if (userOpt.isPresent()) {
             user = userOpt.get();
-            user.setName(name);
+            user.setUsername(username);
             user.setAvatarUrl(avatarUrl);
             user.setEmail(email);
         } else {
@@ -43,6 +45,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user = User.builder()
                     .authProvider(provider)
                     .providerId(providerId)
+                    .username(username)
                     .email(email)
                     .avatarUrl(avatarUrl)
                     .build();
@@ -61,14 +64,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private String getEmail(Map<String, Object> attributes, AuthProvider provider) {
         return switch (provider) {
             case GOOGLE -> (String) attributes.get("email");
-            case GITHUB -> (String) ((Map<?, ?>) attributes.get("email")).toString(); // GitHub 默认不返回 email，需另外请求
+            case GITHUB -> null; // GitHub 默认不返回 email，需另外请求
             default -> null;
         };
     }
 
-    private String getName(Map<String, Object> attributes, AuthProvider provider) {
+    private String getUsername(Map<String, Object> attributes, AuthProvider provider) {
         return switch (provider) {
-            case GOOGLE -> (String) attributes.get("name");
+            case GOOGLE -> Optional.ofNullable((String) attributes.get("name"))
+                    .or(() -> Optional.ofNullable((String) attributes.get("email")))
+                    .orElse("google_user");
             case GITHUB -> (String) attributes.get("login");
             default -> null;
         };

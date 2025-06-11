@@ -14,7 +14,7 @@ export default function NavBar(){
         }
     };
 
-    const {user} = useContext(UserContext);
+    const {user, setUser} = useContext(UserContext);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const handleLogout = () => {
         const confirmLogout = window.confirm("Are you sure you want to log out?");
@@ -23,6 +23,7 @@ export default function NavBar(){
 
         axios.post('http://localhost:8080/logout', {}, { withCredentials: true })
             .then(() => {
+                setUser(null);
                 window.location.href = "http://localhost:5173";  // 登出成功后跳转
             })
             .catch(() => {
@@ -49,20 +50,20 @@ export default function NavBar(){
             </div>
 
         {/* check if user logged in */}
-            {user ? (
-                <>
-                <span className="text-red-600">Hello {user.name}!</span>
-                <Link to={"/dashboard"} className="text-white font-medium">Dashboard</Link>
-                    {/* Log out */}
-                <button onClick={handleLogout}
-                        className="absolute right-4 px-4 py-1.5 border-2 border-white font-medium text-white rounded-md hover:bg-white hover:text-dark transition"
-                >Logout</button>
-            </>) : (<>
-                    {/* Log in */}
+            {(!user || !user.username || user.username === "Unknown user") ? (<>
+                {/* Log in */}
                 <button onClick={() => setShowAuthModal(true)}
                         className="absolute right-4 px-4 py-1.5 border-2 border-white font-medium text-white rounded-md hover:bg-white hover:text-dark transition"
                 >Login</button>
-            </>)}
+            </>): (
+                <>
+                    <span className="text-red-600">Hello {user.username}!</span>
+                    <Link to={"/dashboard"} className="text-white font-medium">Dashboard</Link>
+                    {/* Log out */}
+                    <button onClick={handleLogout}
+                            className="absolute right-4 px-4 py-1.5 border-2 border-white font-medium text-white rounded-md hover:bg-white hover:text-dark transition"
+                    >Logout</button>
+                </>) }
 
             {/* 通过onClose传给子组件关闭函数，来控制弹窗Modal关闭， 在AuthModal中点击button时，激活关闭函数 */}
             {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}

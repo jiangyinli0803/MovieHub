@@ -23,9 +23,9 @@ export default function AuthModal({ onClose }: Props){
 
                     {/* Conditional Rendering 将两个表单整合在一起，使相互转换*/}
                     {isLogin ? (
-                        <Login switchToSignUp={() => setIsLogin(false)} />
+                        <Login switchToSignUp={() => setIsLogin(false)} onClose={onClose}/>
                     ) : (
-                        <SignUp switchToLogin={() => setIsLogin(true)} />
+                        <SignUp switchToLogin={() => setIsLogin(true)}  onClose={onClose}/>
                     )}
                 </div>
             </div>
