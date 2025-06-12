@@ -43,7 +43,7 @@ public class UserWatchlistService {
             currentMovies.add(movie);
             item.setMovies(currentMovies);
         }
-        watchlistRepo.update(item);
+        watchlistRepo.save(item);
         return ResponseEntity.ok("Movie added to watchlist");
     }
 
@@ -54,7 +54,7 @@ public class UserWatchlistService {
         }
         List<Movie> updatedMovies = item.getMovies().stream().filter(m ->m.getTmdbId() != request.getTmdbId()).toList();
         item.setMovies(updatedMovies);
-        watchlistRepo.update(item);
+        watchlistRepo.save(item);
         return ResponseEntity.ok("Movie removed from watchlist");
     }
 

@@ -10,5 +10,4 @@ import java.util.List;
 public interface UserWatchlistRepository extends MongoRepository<UserWatchlist,String> {
     UserWatchlist findByUserId(String userId);
 
-    void update(UserWatchlist item);
 }
