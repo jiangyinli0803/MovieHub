@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface MovieRepository extends MongoRepository<Movie, String> {
     List<Movie> findByCategoryContainingIgnoreCase(String category);
+
+    Movie findByTmdbId(Long tmdbId);
 }

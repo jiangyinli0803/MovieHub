@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     // 注入我们自定义的服务
-    private final CustomUserDetailService customUserDetailsService;
+    private final CustomUserDetailService customUserDetailService;
     private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
@@ -36,7 +36,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/logout", "/api/form/*"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/logout", "/api/form/**", "/api/watchlist/**"))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth").authenticated()
                         .requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll()
@@ -56,7 +56,7 @@ public class SecurityConfig {
                             response.setStatus(HttpStatus.NO_CONTENT.value());
                         })
                         .defaultSuccessUrl("http://localhost:5173"))
-                .userDetailsService(customUserDetailsService)
+                .userDetailsService(customUserDetailService)
                 .oauth2Login(o ->o.defaultSuccessUrl("http://localhost:5173")
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService)));
 
