@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/logout", "/api/form/**", "/api/watchlist/**"))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth").authenticated()
+                        .requestMatchers("/api/auth", "/api/form/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll()
                         .anyRequest().permitAll())
                 .sessionManagement(s-> s.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))

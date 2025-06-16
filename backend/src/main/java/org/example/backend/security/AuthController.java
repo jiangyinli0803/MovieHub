@@ -14,14 +14,16 @@ public class AuthController {
     public AuthUser getMe(@AuthenticationPrincipal Object principal) {
         if (principal == null) return null;
 
+        String id = "";
         String username ="Unknown user";
         String avatarUrl ="/assets/movie-logo.PNG";
 
         if (principal instanceof UserPrincipal userPrincipal) {
+            id = userPrincipal.getId();
             username = userPrincipal.getName();
             avatarUrl = userPrincipal.getAvatarUrl();
         }
 
-        return new AuthUser(username, avatarUrl);
+        return new AuthUser(id, username, avatarUrl);
     }
 }
