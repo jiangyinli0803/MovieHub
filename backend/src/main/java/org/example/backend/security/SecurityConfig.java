@@ -1,5 +1,4 @@
 package org.example.backend.security;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +10,12 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,24 +27,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     // 注入我们自定义的服务
-    private final CustomUserDetailService customUserDetailService;
+    private final UserDetailsService userDetailsService; // 依赖接口，不直接引用自定义实现, 解决循环依赖的问题
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/logout", "/api/form/**", "/api/watchlist/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/logout", "/api/form/**", "/api/watchlist/**", "/api/review/**"))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth", "/api/form/**").permitAll()
+                        .requestMatchers("/api/auth", "/api/form/**", "/api/review/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll()
                         .anyRequest().permitAll())
-                .sessionManagement(s-> s.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                .sessionManagement(s-> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(error -> error
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .logout(logout -> logout
@@ -55,10 +65,13 @@ public class SecurityConfig {
                         .successHandler((request, response, authentication) -> {
                             response.setStatus(HttpStatus.NO_CONTENT.value());
                         })
-                        .defaultSuccessUrl("http://localhost:5173"))
-                .userDetailsService(customUserDetailService)
-                .oauth2Login(o ->o.defaultSuccessUrl("http://localhost:5173")
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService)));
+                        .defaultSuccessUrl("http://localhost:5173")
+                        .permitAll())
+                .userDetailsService(userDetailsService)
+                .oauth2Login(o ->o
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

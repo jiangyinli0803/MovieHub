@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.example.backend.model.user.AuthProvider;
 import org.example.backend.model.user.User;
 import org.example.backend.repository.UserRepository;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +23,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
 
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-       // System.out.println("OAuth2 login triggered for: " + userRequest.getClientRegistration().getRegistrationId());
-        OAuth2User appUser = super.loadUser(userRequest);
-
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+       String registrationId = userRequest.getClientRegistration().getRegistrationId();
         AuthProvider provider = AuthProvider.valueOf(registrationId.toUpperCase());
 
-        Map<String, Object> attributes = appUser.getAttributes();
-        String providerId = getProviderId(attributes, provider);
+        Map<String, Object> attributes;
+        OAuth2User delegateUser;
+
+        // 根据 provider 判断是普通 OAuth2 还是 OIDC（Google）
+        if ("google".equalsIgnoreCase(registrationId)) {
+            // Google 使用的是 OIDC 流程
+            OidcUserService oidcUserService = new OidcUserService();
+            OidcUser oidcUser = oidcUserService.loadUser((OidcUserRequest) userRequest);
+            attributes = oidcUser.getAttributes();
+        } else {
+            OAuth2User oauth2User = super.loadUser(userRequest);
+            attributes = oauth2User.getAttributes();
+        }
+
+       String providerId = getProviderId(attributes, provider);
        String email = getEmail(attributes, provider);
 
         String username = getUsername(attributes, provider);
@@ -64,7 +77,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private String getEmail(Map<String, Object> attributes, AuthProvider provider) {
         return switch (provider) {
             case GOOGLE -> (String) attributes.get("email");
-            case GITHUB -> null; // GitHub 默认不返回 email，需另外请求
+            case GITHUB -> {
+                // 临时返回一个默认邮箱用于测试
+                yield "github_user_" + attributes.get("id") + "@example.com";
+            }
             default -> null;
         };
     }
