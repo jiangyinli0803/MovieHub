@@ -12,7 +12,11 @@ export default function useWatchlist(user: IUser|null|undefined){
             const response = await axios.post(
                 "/api/watchlist/add",
                 { tmdbId, userId: user.id },
-                { withCredentials: true }
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                    }
+                }
             );
             alert(response.data);
         } catch (error) {

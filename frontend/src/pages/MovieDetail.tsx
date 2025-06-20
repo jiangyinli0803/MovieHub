@@ -1,4 +1,4 @@
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import type {IMovie} from "../interface/IMovie.ts";
 import axios from "axios";
@@ -11,6 +11,7 @@ export default function MovieDetail(){
     const [loading, setLoading] = useState(true);
     const{user}= useContext(UserContext);
     const{handleAdd}= useWatchlist(user)
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get(`/api/movies/${id}`)
@@ -71,8 +72,23 @@ export default function MovieDetail(){
                     e.stopPropagation();
                     handleAdd(movie.tmdbId);
                 }}
-                        className="px-4 py-2 m-2 bg-brightblue hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-lg transition">
+                        className="px-4 py-2 m-2 bg-brightblue hover:bg-blue-800 text-white font-semibold rounded-lg transition">
                     + Watchlist
+                </button>
+                <button onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate(`/movies/${movie.tmdbId}/review`, {
+                        state: {
+                            movieTitle: movie?.title,
+                            posterUrl: movie?.posterUrl,
+                            tmdbRating: movie?.rating,
+                            category: movie?.category
+                        }
+                    });
+                }}
+                        className="px-4 py-2 m-2 bg-brightblue hover:bg-blue-800 text-white font-semibold rounded-lg transition">
+                    + Review
                 </button>
             </div>
         </>
