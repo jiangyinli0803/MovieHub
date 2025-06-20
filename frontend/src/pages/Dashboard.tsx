@@ -24,9 +24,9 @@ export default function Dashboard(){
                 <aside className="w-64 h-screen bg-gray-200 text-dark p-6 border border-dark">
                     <ul className="space-y-4">
                         <li className="hover:bg-dark hover:text-white text-center font-bold text-lg py-4 rounded cursor-pointer">Profile</li>
-                        <li>
+                        <li className="hover:bg-dark hover:text-white text-center font-bold text-lg py-4 rounded cursor-pointer">
                             <button onClick={handleShowWatchlist}
-                            className="hover:bg-dark hover:text-white text-center font-bold text-lg py-4 rounded cursor-pointer">Your Watchlist</button>
+                            >Your Watchlist</button>
                         </li>
                         <li className="hover:bg-dark hover:text-white text-center font-bold text-lg py-4 rounded cursor-pointer">Your Reviews</li>
                     </ul>

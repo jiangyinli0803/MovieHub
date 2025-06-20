@@ -14,8 +14,10 @@ export default function NavBar(){
 
         if (!confirmLogout) return;
 
-        axios.post('http://localhost:8080/logout', {}, { withCredentials: true })
+        axios.post('http://localhost:8080/logout', {})
             .then(() => {
+                localStorage.removeItem("authToken");
+               // delete axios.defaults.headers.common['Authorization'];
                 setUser(null);
                 window.location.href = "http://localhost:5173";  // 登出成功后跳转
             })
