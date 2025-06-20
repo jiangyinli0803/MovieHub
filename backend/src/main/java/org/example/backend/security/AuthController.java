@@ -12,6 +12,7 @@ public class AuthController {
 
     @GetMapping
     public AuthUser getMe(@AuthenticationPrincipal Object principal) {
+        System.out.println("Principal class: " + (principal == null ? "null" : principal.getClass().getName()));
         if (principal == null) return null;
 
         String id = "";

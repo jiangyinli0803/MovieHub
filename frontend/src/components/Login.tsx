@@ -23,11 +23,13 @@ export default function Login({switchToSignUp, onClose}: Props){
         setError(null);
         try {
             const response = await axios.post("/api/form/login", { email, password });
-           // console.log('Login successful', response.data);
+           console.log('Login response: ', response.data);
 
-            const { jwtToken, userResponseDto} = response.data;
-            // 重要：将认证信息存储到本地存储（或使用更安全的 HTTP-only cookies）
+            const jwtToken = response.data.jwtToken;
+            const userResponseDto = response.data.userResponseDto;
+            // 重要：将认证信息存储到本地存储
             localStorage.setItem('authToken', jwtToken);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
             setUser(userResponseDto);
 
             navigate('/');

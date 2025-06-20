@@ -1,13 +1,16 @@
 package org.example.backend.controller;
 import org.example.backend.model.Movie;
 import org.example.backend.repository.MovieRepository;
+import org.example.backend.security.JwtAuthenticationFilter;
+import org.example.backend.security.JwtTokenUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -18,8 +21,9 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
-@Import(TmdbControllerTest.TestConfig.class)
+
 @WebMvcTest(TmdbController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class TmdbControllerTest {
 
     @Autowired
@@ -27,6 +31,12 @@ class TmdbControllerTest {
 
     @Autowired
     private MovieRepository movieRepository;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private JwtTokenUtil jwtTokenUtil;
 
     @TestConfiguration
     public static class TestConfig {
