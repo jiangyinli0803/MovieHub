@@ -1,16 +1,14 @@
 package org.example.backend.controller;
 
-import org.example.backend.security.CustomOAuth2UserService;
-import org.example.backend.security.CustomUserDetailService;
-import org.example.backend.security.SecurityConfig;
+import org.example.backend.security.*;
 import org.example.backend.service.TmdbService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.Mockito.times;
@@ -24,13 +22,19 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 
 @WebMvcTest(controllers = AdminMovieController.class)
-@Import(SecurityConfig.class)
+@AutoConfigureMockMvc(addFilters = false)
 class AdminMovieControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private TmdbService tmdbService;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private JwtTokenUtil jwtTokenUtil;
 
     @MockBean
     private CustomUserDetailService customUserDetailService;

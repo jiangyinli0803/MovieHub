@@ -2,6 +2,8 @@ package org.example.backend.controller;
 
 import org.example.backend.model.HandleMovieRequest;
 import org.example.backend.model.Movie;
+import org.example.backend.security.JwtAuthenticationFilter;
+import org.example.backend.security.JwtTokenUtil;
 import org.example.backend.service.UserWatchlistService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +18,23 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @WebMvcTest(UserWatchlistController.class)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 class UserWatchlistControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private JwtTokenUtil jwtTokenUtil;
 
     @MockBean
     private UserWatchlistService service;
@@ -35,7 +45,7 @@ class UserWatchlistControllerTest {
     @WithMockUser(username = "tester")
     void addToWatchlist() throws Exception {
 
-        when(service.addToWatchlist(request)).thenReturn(ResponseEntity.ok("Movie added to watchlist"));
+        when(service.addToWatchlist(any(HandleMovieRequest.class))).thenReturn(ResponseEntity.ok("Movie added to watchlist"));
 
         //!!!!Spring Security 默认对 POST、PUT、DELETE 等“修改状态”的请求启用了 CSRF 保护
         mockMvc.perform(MockMvcRequestBuilders.post("/api/watchlist/add")
